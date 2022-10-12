@@ -199,27 +199,18 @@ class IL_helper(Dataset):
             print("Feature:", in_features, "Class:", out_features)
             new_fc = modified_linear.SplitCosineLinear(in_features, out_features, self.args.nb_cl)
             # Set the final FC layer for classification
-#             new_fc.fc1.weight.data = df_model.fc.weight.data
-#             new_fc.sigma.data = df_model.fc.sigma.data
             df_model.fc = new_fc
-
-#             new_df_fc = modified_linear.SplitCosineLinear(in_features, out_features, self.args.nb_cl)
         else:
             # The i-th phase, i>=2
             # Get the information about the input and output features from the network
             generator = self.generator(nz=self.args.nz, nc=3, img_size=32)
             df_model = self.network(num_classes=self.args.nb_cl_fg)
             in_features = df_model.fc.in_features
-#             out_features1 = df_model.fc.fc1.out_features
-#             out_features2 = df_model.fc.fc2.out_features
             # Print the information about the input and output features
 #             print("Feature:", in_features, "Class:", out_features1+out_features2)
             # Set the final FC layer for classification
             num_features = 60 + (session_id-1)*5
             new_fc = modified_linear.SplitCosineLinear(in_features, num_features, self.args.nb_cl)
-#             new_fc.fc1.weight.data[:out_features1] = df_model.fc.fc1.weight.data
-#             new_fc.fc1.weight.data[out_features1:] = df_model.fc.fc2.weight.data
-#             new_fc.sigma.data = df_model.fc.sigma.data
             df_model.fc = new_fc
         return generator, df_model
 
@@ -237,8 +228,8 @@ class IL_helper(Dataset):
         """
         # set the lr decay milestone
         self.lr_milestone = [40, 70]
-        lr_backbone = 0.0001#*(8+1-session_id)/8#0.002#0.001#* (10-session_id)/10
-        lr_fc1 = 0.0001#0.001#*(8+1-session_id)/8#0.005 * (10-session_id)/10
+        lr_backbone = 0.0001
+        lr_fc1 = 0.0001
         lr_fc2 = 0.1
         
         if session_id > start_iter: 
